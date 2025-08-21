@@ -55,15 +55,17 @@ BE_FINAL_CODE/
 ## 💡 Workflow / Pipeline (high-level)
 
 1. **Configuration** — Set experiment parameters (start/end dates, rebalance frequency, top N sectors, lookback windows, risk target, stop-loss thresholds).
-2. **Data Fetching** — Download OHLCV for the universe using `yfinance` (or load from local CSVs).
-3. **Preprocessing** — Align daily returns, handle missing data, winsorize outliers, and compute sector-level returns and volatility.
-4. **Sector Ranking** — For each rebalance date compute scores (e.g., inverse volatility + trailing returns) and pick the top `K` sectors.
-5. **Stock Selection** — From each selected sector, filter stocks by liquidity and volatility and pick the top `M` per sector.
-6. **Weighting** — Build correlation matrix, perform hierarchical clustering and compute HRP weights across selected stocks.
-7. **Leverage & Risk Targeting** — Scale weights so portfolio volatility matches the target (or apply leverage cap).
-8. **Stop-Loss Application** — During the simulation apply per-position and portfolio stop-loss rules, with optional trailing stop.
-9. **Performance Calculation** — Track P\&L, drawdowns, turnover, Sharpe, CAGR, volatility, and other metrics.
-10. **Reporting & Visualization** — Export trade logs, per-rebalance reports, cumulative returns and diagnostic plots.
+2. **NSE Sector CSV Fetching** — Download latest constituent CSVs for Nifty sectors (IT, Auto, Bank, FMCG, etc.) and Midcap 100.
+3. **Symbol Extraction & Validation** — Extract symbols, append `.NS`, validate historical data for minimum years/data points, and track listing dates.
+4. **Data Fetching** — Download OHLCV for validated symbols using yfinance (or load from local CSVs).
+5. **Preprocessing** — Align daily returns, handle missing data, winsorize outliers, and compute sector-level returns and volatility.
+6. **Sector Ranking** — For each rebalance date, compute scores (inverse volatility + trailing returns) and pick the top K sectors.
+7. **Stock Selection** — From each selected sector, filter stocks by liquidity and volatility and pick the top M per sector.
+8. **Weighting** — Build correlation matrix, perform hierarchical clustering, and compute HRP weights across selected stocks.
+9. **Leverage & Risk Targeting** — Scale weights so portfolio volatility matches the target (or apply leverage cap).
+10. **Stop-Loss Application** — During the simulation, apply per-position and portfolio stop-loss rules, with optional trailing stop.
+11. **Performance Calculation** — Track P&L, drawdowns, turnover, Sharpe, CAGR, volatility, and other metrics.
+12. **Reporting & Visualization** — Export trade logs, per-rebalance reports, cumulative returns, and diagnostic plots.
 
 ---
 
@@ -106,7 +108,7 @@ PyYAML
 
 The notebook contains well-documented functions for:
 
-* `get_historical_data(tickers, start, end, interval)` — fetch and cache OHLCV from yfinance.
+* `get_historical_data(tickers, start, end, interval)` — fetch and cache OHLCV from yfinance with retry logic.
 * `compute_sector_returns(prices, sector_map)` — aggregate stock returns to sectors.
 * `rank_sectors(sector_returns, lookback_vol, lookback_ret)` — compute sector scores and select top K.
 * `select_diversified_sectors(universe, sector_map, K)` — return selected sector tickers.
@@ -114,9 +116,13 @@ The notebook contains well-documented functions for:
 * `get_hrp_weights(cov_matrix)` — compute HRP weights using hierarchical clustering and inverse-variance allocation.
 * `simulate_backtest(config)` — orchestrates the simulation loop (rebalance, apply trades, mark-to-market, stop-losses).
 * `calculate_performance_metrics(nav_series)` — computes Sharpe, CAGR, max drawdown, volatility.
+* NSE Sector Utilities:
+  * Download sector CSVs from Nifty.
+  * Extract symbols and append `.NS`.
+  * Validate symbols based on history and minimum data points.
+  * Generate `validated_stocks2.csv` and `invalidated_stocks.csv`.
 
-Each function is accompanied by docstrings and example usage in the notebook cells.
-
+Each function is documented in the notebook with examples.
 ---
 
 ## 🧪 How to run (quickstart)
@@ -138,7 +144,7 @@ The project includes comparison against:
 * **Equally Weighted (sector-level)** — allocate equal weight across selected sectors and equally across stocks inside sector.
 * **Buy-and-Hold Benchmark** — the benchmark index or equal-weight universe.
 
-Metrics tracked: CAGR, Annualized Volatility, Sharpe Ratio (annualized), Max Drawdown, Calmar Ratio, Turnover, Average Position Size.
+Metrics tracked: CAGR, Annualized Volatility, Sharpe Ratio (annualized), Alpha, Beta.
 
 ---
 
@@ -146,9 +152,7 @@ Metrics tracked: CAGR, Annualized Volatility, Sharpe Ratio (annualized), Max Dra
 
 * **Data quality matters:** Use cleaned, adjusted close prices for return calculations.
 * **Delistings / corporate actions:** Backtest must handle missing tickers across history (drop or replace with proxy).
-* **Lookahead bias:** Avoid using future information when selecting sectors/stocks — ensure all signals are computed using data available at the rebalance date.
 * **Transaction costs & slippage:** Add realistic fees to the simulate\_backtest function for robust results.
-* **Out-of-sample testing:** Reserve the last portion of the dataset (e.g., final 12 months) as a holdout to test parameter stability.
 
 ---
 
