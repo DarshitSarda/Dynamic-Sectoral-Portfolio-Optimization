@@ -73,7 +73,6 @@ BE_FINAL_CODE/
 * `REBALANCE_FREQ = 'Q'` — quarterly by default (can use monthly or custom date list)
 * `TOP_SECTORS = 3 to 10` — number of sectors to select per rebalance
 * `STOCKS_PER_SECTOR = 5` — top stocks selected within each sector
-* `MAX_GROSS_LEVERAGE = 2.0` — cap on leverage
 * `STOP_LOSS_PCT = 0.05` — 5% stop-loss for the portfolio (configurable)
 * `ENABLE_PLOTS = True` — toggle plotting
 
