@@ -156,7 +156,6 @@ Metrics tracked: CAGR, Annualized Volatility, Sharpe Ratio (annualized), Max Dra
 ## 🐞 Troubleshooting
 
 * If yfinance throttles, cache price CSVs locally and re-run tests from cached data.
-* If clustering throws errors, check for NaNs in the covariance matrix; add tiny diagonal regularization if needed (`cov += 1e-6 * np.eye(len(cov))`).
 * If performance metrics are NaN, ensure NAV does not contain zeros or constant values; examine trade log for missed rebalances.
 
 ---
@@ -164,7 +163,3 @@ Metrics tracked: CAGR, Annualized Volatility, Sharpe Ratio (annualized), Max Dra
 ## 📄 Contact
 
 For questions or to collaborate, contact **Darshit Sarda**.
-
----
-
-*README generated and saved to the project canvas (editable).*
