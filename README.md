@@ -35,17 +35,17 @@ This repository contains a single running notebook (with supporting code embedde
 
 ```
 BE_FINAL_CODE/
-├─ BE_FINAL_CODE with explanation.ipynb     # Main notebook — run top-to-bottom
-├─ data/                                    # raw input (optional: cached price files)
-│  ├─ prices/                               # historical OHLCV CSVs (optional)
-│  └─ scheme_master.csv                     # (if integrating mutual fund flows)
+├─ BE_FINAL_CODE with explanation.ipynb     
+├─ data/                                    
+│  ├─ prices/                               
+│  └─ scheme_master.csv                     
 ├─ outputs/
-│  ├─ backtests/                            # per-run backtest CSVs and trade logs
-│  ├─ plots/                                # generated PNG/SVG plots
-│  └─ reports/                              # summary CSVs and performance metrics
-├─ utils/                                   # helper modules (if extracted)
+│  ├─ backtests/                            
+│  ├─ plots/                                
+│  └─ reports/                              
+├─ utils/                                   
 ├─ requirements.txt
-└─ README.md                                # this document
+└─ README.md                                
 ```
 
 > *Note:* The notebook embeds many utility functions; for production use extract them to `utils/` and create a CLI or pipeline.
